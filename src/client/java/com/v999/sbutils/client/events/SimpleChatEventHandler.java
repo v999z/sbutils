@@ -1,0 +1,36 @@
+package com.v999.sbutils.client.events;
+
+import com.v999.sbutils.client.feature.*;
+import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
+import net.minecraft.network.chat.Component;
+
+public class SimpleChatEventHandler implements ClientReceiveMessageEvents.Game {
+    public static final SimpleChatEventHandler INSTANCE = new SimpleChatEventHandler();
+
+    @Override
+    public void onReceiveGameMessage(Component message, boolean isOverlay) {
+        String text = message.getString();
+        if (isOverlay) {
+            RagnarockTimer.INSTANCE.onReceiveOverlay(text);
+        } else {
+            AutoConversation.INSTANCE.onReceiveChat(message);
+            LifeSaverTimer.INSTANCE.onReceiveChat(text);
+            SpiritPetWarning.INSTANCE.onReceiveChat(text);
+            AutoPetNotification.INSTANCE.onReceiveChat(text);
+            PickobulusPreview.INSTANCE.onReceiveChat(text);
+            LobbyHistory.INSTANCE.onReceiveChat(text);
+            RNGDrop.INSTANCE.onReceiveChat(text);
+            DynamicIslandChatAlerts.INSTANCE.onReceiveChat(text);
+            UsernameMentionSound.INSTANCE.onReceiveChat(text);
+            EntranceNotifier.INSTANCE.onReceiveChat(text);
+        }
+    }
+
+    public interface NonOverlay {
+        void onReceiveChat(String message);
+    }
+
+    public interface Overlay {
+        void onReceiveOverlay(String message);
+    }
+}

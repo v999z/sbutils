@@ -1,0 +1,17 @@
+{
+  "sbutils.bilibili": "bilibili",
+
+  "key.category.sbutils.main": "Sbutils",
+  "key.sbutils.ghost_pickaxe": "Ghost Pickaxe",
+  "key.sbutils.show_click_gui": "Show Click GUI",
+  "key.sbutils.switch_pickobulus_preview": "Switch Pickobulus Preview",
+  "key.sbutils.switch_day_viewer": "Switch Day Viewer",
+
+  "key.sbutils.speed_dial_up": "Speed Dial - Up",
+  "key.sbutils.speed_dial_page_up": "Speed Dial - Page Up",
+  "key.sbutils.speed_dial_down": "Speed Dial - Down",
+  "key.sbutils.speed_dial_page_down": "Speed Dial - Page Down",
+  "key.sbutils.speed_dial_left": "Speed Dial - Left",
+  "key.sbutils.speed_dial_right": "Speed Dial - Right",
+  "key.sbutils.speed_dial_star": "Speed Dial - Add/Remove Star"
+}
