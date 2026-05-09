@@ -28,7 +28,7 @@
 
 • Prevent attacking goons (during Aura, Dante etc)
 
-• Freelook (little bit broken, might fix in future)
+• Freelook
 
 • Etherwarp Helper
 
