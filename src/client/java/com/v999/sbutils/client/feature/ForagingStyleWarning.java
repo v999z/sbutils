@@ -1,0 +1,42 @@
+package com.v999.sbutils.client.feature;
+
+import com.v999.sbutils.client.SbutilsClient;
+import com.v999.sbutils.client.config.ConfigManager;
+import com.v999.sbutils.client.ui.container.ForagingStyleWarningContainer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Util;
+import net.minecraft.world.level.biome.Biome;
+
+public class ForagingStyleWarning {
+    private static final Identifier HYPIXEL_GALATEA_BIOME = Identifier.fromNamespaceAndPath("hypixel", "moonglade");
+
+    public static void whenWoodBreakSound(ClientboundSoundPacket packet) {
+        if (!ConfigManager.FEATURES.ENABLE_FORAGING_STYLE_WARNING) return;
+
+        Minecraft client = Minecraft.getInstance();
+        if (client.player == null || client.level == null) return;
+        if (!client.player.getMainHandItem().getItem().getDescriptionId().endsWith("_axe")) {
+            return;
+        }
+        BlockPos playerPos = client.player.getOnPos();
+        Holder<Biome> biome = client.level.getBiomeFabric(playerPos);
+        if (biome == null || !biome.is(HYPIXEL_GALATEA_BIOME)) return;
+
+        float pitch = packet.getPitch();
+        // note: the pitch of cutting the correct part of the wood is 1.0
+        if (pitch != 0.2857143F) { // pitch of cutting the incorrect part
+            return;
+        }
+
+        if (playerPos.distToLowCornerSqr(packet.getX(), packet.getY(), packet.getZ()) > 9F * 9F) {
+            return;
+        }
+
+        ForagingStyleWarningContainer.INSTANCE.lastTriggeredTimestamp = Util.getMillis();
+        SbutilsClient.island.show(ForagingStyleWarningContainer.INSTANCE);
+    }
+}

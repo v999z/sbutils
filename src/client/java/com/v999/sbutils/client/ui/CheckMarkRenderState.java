@@ -1,0 +1,83 @@
+package com.v999.sbutils.client.ui;
+
+import com.v999.sbutils.client.ui.animation.Animation;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
+import net.minecraft.client.gui.render.TextureSetup;
+import net.minecraft.client.renderer.state.gui.GuiElementRenderState;
+import net.minecraft.util.Mth;
+import org.joml.Matrix3x2f;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+
+public class CheckMarkRenderState implements GuiElementRenderState {
+    public static final float LENGTH = 60F;
+
+    private static final float STARTING_PERCENT = 0F;
+    private static final float INFLECTION_PERCENT = 0.6F;
+
+    private final float x, y, scale;
+    private final int color;
+    private final Matrix3x2f pose;
+    private final Animation progress;
+    private final ScreenRectangle scissorArea;
+    private final ScreenRectangle bounds;
+
+    public CheckMarkRenderState(GuiGraphicsExtractor context, float x, float y, float scale, int color, Animation progress) {
+        this.x = x;
+        this.y = y;
+        this.scale = scale;
+        this.color = color;
+        this.pose = new Matrix3x2f(context.pose());
+        this.progress = progress;
+
+        this.scissorArea = context.scissorStack.peek();
+        ScreenRectangle bounds = new ScreenRectangle(Mth.floor(x), Mth.floor(y), Mth.ceil(LENGTH * scale), Mth.ceil(LENGTH * scale));
+        this.bounds = scissorArea == null ? bounds : scissorArea.intersection(bounds);
+    }
+
+    @Override
+    public void buildVertices(@NonNull VertexConsumer consumer) {
+        float progressRatio = this.progress.ratio();
+        if (progressRatio < 0F) progressRatio = 0F;
+        else if (progressRatio > 1F) progressRatio = 1F;
+
+        if (progressRatio > STARTING_PERCENT) {
+            float ratio = (progressRatio - STARTING_PERCENT) / (INFLECTION_PERCENT - STARTING_PERCENT);
+            if (ratio > 1F) ratio = 1F;
+            consumer.addVertexWith2DPose(pose, this.x + this.scale * 15F, this.y + this.scale * 32F).setColor(this.color);
+            consumer.addVertexWith2DPose(pose, this.x + this.scale * 18F, this.y + this.scale * 29F).setColor(this.color);
+            consumer.addVertexWith2DPose(pose, this.x + this.scale * (15F + (11F * ratio)), this.y + this.scale * (32F + (11F * ratio))).setColor(this.color); // (26, 43)
+            consumer.addVertexWith2DPose(pose, this.x + this.scale * (18F + (8F * ratio)), this.y + this.scale * (29F + (8F * ratio))).setColor(this.color); // (26, 37)
+
+            if (progressRatio > INFLECTION_PERCENT) {
+                ratio = (progressRatio - INFLECTION_PERCENT) / (1F - INFLECTION_PERCENT);
+                if (ratio > 1F) ratio = 1F;
+                consumer.addVertexWith2DPose(pose, this.x + this.scale * (26F + (19F * ratio)), this.y + this.scale * (43F - (19F * ratio))).setColor(this.color); // (45, 24)
+                consumer.addVertexWith2DPose(pose, this.x + this.scale * (26F + (16F * ratio)), this.y + this.scale * (37F - (16F * ratio))).setColor(this.color); // (42, 21)
+            }
+        }
+    }
+
+    @Override
+    public @NonNull RenderPipeline pipeline() {
+        return SbutilsRenderTypes.PIPELINE_DEBUG_TRIANGLE_STRIP;
+    }
+
+    @Override
+    public @NonNull TextureSetup textureSetup() {
+        return TextureSetup.noTexture();
+    }
+
+    @Override
+    public @Nullable ScreenRectangle scissorArea() {
+        return scissorArea;
+    }
+
+    @Override
+    public @Nullable ScreenRectangle bounds() {
+        return bounds;
+    }
+}
