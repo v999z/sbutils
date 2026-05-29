@@ -16,9 +16,12 @@ import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Util;
+import org.lwjgl.glfw.GLFW;
 import org.jspecify.annotations.NonNull;
 
 import java.util.PriorityQueue;
@@ -38,6 +41,8 @@ public class ClickGUIScreen extends Screen {
     private static final float DEFAULT_OUTER_PADDING = 18F;
     private static final float COMPACT_OUTER_RADIUS = 18F;
     private static final float COMPACT_OUTER_PADDING = 12F;
+    private static String searchQuery = "";
+    private static long searchIndicateUntil = 0L;
 
     public static boolean isCompactMode() {
         return ConfigManager.GENERAL.CLICK_GUI_COMPACT_MODE;
@@ -53,6 +58,22 @@ public class ClickGUIScreen extends Screen {
 
     public static float navigationFontSize() {
         return isCompactMode() ? 8.5F : 10F;
+    }
+
+    public static String searchQuery() {
+        return searchQuery;
+    }
+
+    public static String searchNavigationLabel() {
+        if (searchQuery.isBlank()) {
+            return "Search...";
+        }
+        String display = searchQuery.length() > 14 ? searchQuery.substring(0, 13) + "..." : searchQuery;
+        return "Search: " + display;
+    }
+
+    public static boolean shouldIndicateSearch() {
+        return Util.getMillis() < searchIndicateUntil;
     }
 
     private static float halfWidth() {
@@ -145,7 +166,18 @@ public class ClickGUIScreen extends Screen {
                 return true;
             }
         });
-        this.nav.destinations.add((DummyNavigationDestination) () -> "Made by v999");
+        this.nav.destinations.add(new DummyNavigationDestination() {
+            @Override
+            public String name() {
+                return ClickGUIScreen.searchNavigationLabel();
+            }
+
+            @Override
+            public boolean navigate() {
+                searchIndicateUntil = Util.getMillis() + 420L;
+                return false;
+            }
+        });
         this.children.add(this.nav);
         //this.children.add(new FragmentView(0F, 0F, new GeneralPage(), LAYER_DEPTH + 1));
     }
@@ -220,6 +252,35 @@ public class ClickGUIScreen extends Screen {
             if (child.mouseClicked(mouseXF, mouseYF)) return true;
         }
         return super.mouseClicked(event, isDoubleClick);
+    }
+
+    @Override
+    public boolean keyPressed(KeyEvent event) {
+        if (event.key() == GLFW.GLFW_KEY_BACKSPACE && !searchQuery.isEmpty()) {
+            searchQuery = searchQuery.substring(0, searchQuery.length() - 1);
+            return true;
+        }
+        if (event.key() == GLFW.GLFW_KEY_ESCAPE && !searchQuery.isEmpty()) {
+            searchQuery = "";
+            return true;
+        }
+        return super.keyPressed(event);
+    }
+
+    @Override
+    public boolean charTyped(CharacterEvent event) {
+        if (!event.isAllowedChatCharacter()) {
+            return super.charTyped(event);
+        }
+        String typed = event.codepointAsString();
+        if (typed == null || typed.isBlank()) {
+            return super.charTyped(event);
+        }
+        searchQuery = (searchQuery + typed).trim();
+        if (searchQuery.length() > 48) {
+            searchQuery = searchQuery.substring(0, 48);
+        }
+        return true;
     }
 
     @Override

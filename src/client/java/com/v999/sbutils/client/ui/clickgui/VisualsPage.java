@@ -37,6 +37,9 @@ public class VisualsPage extends AbstractPage {
                 new ModuleItemView(client, "Dropped item glow filter list",
                         () -> "Current: " + DroppedItemGlow.filterListDisplay() + ". Click to add with /sbutils glowfilter add",
                         () -> client.setScreen(new ChatScreen("/sbutils glowfilter add ", true))),
+                new ModuleItemView(client, "Dropped item glow presets",
+                        () -> "Add presets: " + DroppedItemGlow.presetListDisplay() + ". Click to apply the next preset.",
+                        DroppedItemGlow::applyPresetCycle),
                 new ModuleItemView(client, "Dropped item glow rarity colors", "Color the glow by detected SkyBlock rarity instead of using plain white.", ConfigManager.FEATURES.DROPPED_ITEM_GLOW_RARITY_COLORS, newValue -> {
                     ConfigManager.FEATURES.DROPPED_ITEM_GLOW_RARITY_COLORS = newValue;
                     ConfigManager.FEATURES.markAsChanged();

@@ -1,6 +1,7 @@
 package com.v999.sbutils.client.events;
 
 import com.v999.sbutils.client.feature.*;
+import com.v999.sbutils.client.feature.kuudra.KuudraSupplyHelper;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.network.chat.Component;
 
@@ -19,6 +20,8 @@ public class SimpleChatEventHandler implements ClientReceiveMessageEvents.Game {
             AutoPetNotification.INSTANCE.onReceiveChat(text);
             PickobulusPreview.INSTANCE.onReceiveChat(text);
             LobbyHistory.INSTANCE.onReceiveChat(text);
+            SlayerBossHelper.INSTANCE.onReceiveChat(text);
+            KuudraSupplyHelper.INSTANCE.onReceiveChat(text);
             RNGDrop.INSTANCE.onReceiveChat(text);
             DynamicIslandChatAlerts.INSTANCE.onReceiveChat(text);
             UsernameMentionSound.INSTANCE.onReceiveChat(text);

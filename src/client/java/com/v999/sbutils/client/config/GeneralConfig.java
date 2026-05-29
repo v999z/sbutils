@@ -23,7 +23,7 @@ public class GeneralConfig extends AbstractConfig {
     public String CLICK_GUI_ACCENT_COLOR = "blue";
 
     @SerializedName("click_gui_compact_mode")
-    public boolean CLICK_GUI_COMPACT_MODE = false;
+    public boolean CLICK_GUI_COMPACT_MODE = true;
 
     @SerializedName("auto_update_enabled")
     public boolean AUTO_UPDATE_ENABLED = true;

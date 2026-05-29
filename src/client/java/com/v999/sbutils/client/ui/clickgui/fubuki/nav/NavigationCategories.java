@@ -4,6 +4,7 @@ import com.v999.sbutils.client.ui.Easy2D;
 import com.v999.sbutils.client.ui.animation.Animation;
 import com.v999.sbutils.client.ui.animation.Smooth;
 import com.v999.sbutils.client.ui.clickgui.ClickGuiTheme;
+import com.v999.sbutils.client.ui.clickgui.ClickGUIScreen;
 import com.v999.sbutils.client.ui.clickgui.Element;
 import com.v999.sbutils.client.ui.font.FontManager;
 import com.v999.sbutils.client.ui.font.RenderInfo;
@@ -79,6 +80,22 @@ public class NavigationCategories implements Element {
             List<FloatFloatImmutablePair> bounds = new ObjectArrayList<>(categoryRenderedTexts.size());
             for (int i = 0; i < categoryRenderedTexts.size(); i++) {
                 RenderedText text = categoryRenderedTexts.get(i);
+                boolean searchSlot = destinations.get(i) instanceof DummyNavigationDestination
+                        && destinations.get(i).name().startsWith("Search");
+                if (searchSlot) {
+                    float paddingX = buttonHeight * 0.55F;
+                    int color = ClickGUIScreen.shouldIndicateSearch()
+                            ? ClickGuiTheme.withAlpha(ClickGuiTheme.accentColor(), 0x95)
+                            : ClickGuiTheme.withAlpha(ClickGuiTheme.backgroundShadowColor(), 0xB0);
+                    Easy2D.drawRoundRect(currentX - paddingX,
+                            buttonY,
+                            currentX + text.bounds.width / scale + paddingX,
+                            buttonY + buttonHeight,
+                            buttonHeight * 0.5F,
+                            0F,
+                            color,
+                            0x00000000);
+                }
                 // TODO: pass alpha value
                 text.draw(context, currentX, startY + (height + text.bounds.y / scale) * 0.5F, (float) window.getGuiScale(),
                         i == selectedIndex ? ClickGuiTheme.selectedNavigationTextColor() : ClickGuiTheme.textPrimaryColor());
@@ -112,7 +129,8 @@ public class NavigationCategories implements Element {
             for (int i = 0; i < bounds.size(); i++) {
                 FloatFloatImmutablePair bound = categoryTextBounds.get(i);
                 if (bound.leftFloat() <= mouseX && mouseX <= bound.rightFloat()) {
-                    if (selectedIndex != i && destinations.get(i).navigate()) {
+                    boolean navigated = destinations.get(i).navigate();
+                    if (selectedIndex != i && navigated) {
                         selectedIndex = i;
                     }
                     return true;

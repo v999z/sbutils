@@ -71,6 +71,16 @@ public class ModuleItemView implements MeasurableElement {
         return height();
     }
 
+    public boolean matchesSearch(String query) {
+        if (query == null || query.isBlank()) {
+            return true;
+        }
+        String normalizedQuery = query.trim().toLowerCase(java.util.Locale.ROOT);
+        String resolvedSubtitle = subtitleSupplier != null ? subtitleSupplier.get() : subtitle;
+        return title.toLowerCase(java.util.Locale.ROOT).contains(normalizedQuery)
+                || (resolvedSubtitle != null && resolvedSubtitle.toLowerCase(java.util.Locale.ROOT).contains(normalizedQuery));
+    }
+
     @Override
     public int getLayerDepth() {
         return LAYER_DEPTH;

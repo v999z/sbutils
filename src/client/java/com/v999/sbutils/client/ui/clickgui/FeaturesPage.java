@@ -47,6 +47,10 @@ public class FeaturesPage extends AbstractPage {
                     ConfigManager.FEATURES.ENABLE_PREVENT_ATTACKING_ON_GOONS = newValue;
                     ConfigManager.FEATURES.markAsChanged();
                 }),
+                new ModuleItemView(client, "Slayer boss helper", "Show alerts for Slayer quest starts, minibosses, boss spawns, and boss clears.", ConfigManager.FEATURES.ENABLE_SLAYER_BOSS_HELPER, newValue -> {
+                    ConfigManager.FEATURES.ENABLE_SLAYER_BOSS_HELPER = newValue;
+                    ConfigManager.FEATURES.markAsChanged();
+                }),
                 new ModuleItemView(client, "0 Ping Dungeonbreaker", "Ignore mining fatigue when holding Dungeonbreaker in Dungeons.", ConfigManager.PATCHES.ZERO_PING_DUNGEONBREAKER, newValue -> {
                     ConfigManager.PATCHES.ZERO_PING_DUNGEONBREAKER = newValue;
                     ConfigManager.PATCHES.markAsChanged();

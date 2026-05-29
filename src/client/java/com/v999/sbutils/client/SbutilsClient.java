@@ -300,7 +300,22 @@ public class SbutilsClient implements ClientModInitializer {
                                         ConfigManager.processChanges();
                                         context.getSource().sendFeedback(Component.literal("[Sbutils] Cleared dropped item glow filters."));
                                         return 0;
-                                    })))
+                                    }))
+                            .then(literal("preset")
+                                    .executes(context -> {
+                                        context.getSource().sendFeedback(Component.literal("[Sbutils] Glow presets: " + DroppedItemGlow.presetListDisplay()));
+                                        return 0;
+                                    })
+                                    .then(argument("preset", StringArgumentType.greedyString())
+                                            .executes(context -> {
+                                                String preset = StringArgumentType.getString(context, "preset");
+                                                if (DroppedItemGlow.applyPreset(preset)) {
+                                                    context.getSource().sendFeedback(Component.literal("[Sbutils] Applied dropped item glow preset: " + DroppedItemGlow.normalize(preset)));
+                                                } else {
+                                                    context.getSource().sendFeedback(Component.literal("[Sbutils] Unknown glow preset. Available: " + DroppedItemGlow.presetListDisplay()));
+                                                }
+                                                return 0;
+                                            }))))
                     .then(literal("configSave")
                             .executes(context -> {
                                 ConfigManager.processChanges();

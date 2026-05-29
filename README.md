@@ -8,6 +8,7 @@ Open the ClickGUI with `/sbutils` or the configured keybind.
 
 - Background blur while the SBUtils UI is open
 - ClickGUI theme selector
+- ClickGUI settings search bar
 - Accent color selector
 - Compact mode for denser settings
 - HUD editor for movable HUD elements
@@ -24,6 +25,7 @@ Open the ClickGUI with `/sbutils` or the configured keybind.
 - Etherwarp Helper
 - Auto conversation for safe single-option NPC prompts
 - Prevent attacking Goons
+- Slayer boss helper for quest, miniboss, boss spawn, and clear alerts
 - 0 Ping Dungeonbreaker
 - Cancel shortbow pull animation
 - No command execution confirmation
@@ -33,6 +35,7 @@ Open the ClickGUI with `/sbutils` or the configured keybind.
 - Day viewer
 - Dropped item glow
 - Dropped item glow filters by name, item ID, or rarity
+- Dropped item glow presets for rarity, Dungeons, Slayer, and Kuudra drops
 - Dropped item glow rarity colors
 - Compact duplicate chat messages
 - Configurable compact chat counter color
@@ -49,6 +52,7 @@ Open the ClickGUI with `/sbutils` or the configured keybind.
 ## Kuudra
 
 - Auto Pearl: throws a pearl when you are holding an ender pearl while Elle's Supplies or a Ballista Fuel Cell is in slot 9.
+- Supply Helper: shows Dynamic Island alerts for Elle's Supplies and Ballista Fuel Cell chat updates.
 
 ## Config
 
@@ -64,6 +68,7 @@ The config folder contains SBUtils JSON files, synced Speed Dial contacts, and c
 - `/sbutils whitelist add ITEM_ID` adds a force-toggle-use item
 - `/sbutils whitelist list` lists force-toggle-use items
 - `/sbutils glowfilter add FILTER` adds a dropped item glow filter
+- `/sbutils glowfilter preset PRESET` adds a dropped item glow preset. Presets: `rarity`, `dungeon`, `slayer`, `kuudra`
 - `/sbutils glowfilter list` lists dropped item glow filters
 - `/sbutils nickhider on|off|set ALIAS` controls nickname hiding
 - `/sbutils resetLifeTimer` resets life saver cooldown tracking

@@ -6,12 +6,16 @@ import com.v999.sbutils.client.ui.clickgui.fubuki.list.ListView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class AbstractPage implements Element {
     public static final int LAYER_DEPTH = ClickGUIScreen.LAYER_DEPTH + 2;
 
     private float startX, startY, endX, endY;
     private final ListView<ModuleItemView> listView;
     private final ScrollWrapper scrollWrapper;
+    private final List<ModuleItemView> allItems;
 
     public static float itemGap() {
         return ConfigManager.GENERAL.CLICK_GUI_COMPACT_MODE ? 2F : 4F;
@@ -19,12 +23,21 @@ public abstract class AbstractPage implements Element {
 
     AbstractPage(Minecraft client, ListView<ModuleItemView> listView) {
         this.listView = listView;
+        this.allItems = new ArrayList<>(listView.elementList);
         this.scrollWrapper = new ScrollWrapper(listView);
     }
 
     @Override
     public void render(GuiGraphicsExtractor context, int mouseX, int mouseY, long timeDiff) {
         listView.gap = itemGap();
+        String query = ClickGUIScreen.searchQuery();
+        if (query.isBlank()) {
+            listView.elementList = allItems;
+        } else {
+            listView.elementList = allItems.stream()
+                    .filter(item -> item.matchesSearch(query))
+                    .toList();
+        }
         scrollWrapper.render(context, mouseX, mouseY, timeDiff);
     }
 

@@ -40,6 +40,12 @@ public class FeaturesConfig extends AbstractConfig {
     @SerializedName("enable_kuudra_auto_pearl")
     public boolean ENABLE_KUUDRA_AUTO_PEARL = false;
 
+    @SerializedName("enable_slayer_boss_helper")
+    public boolean ENABLE_SLAYER_BOSS_HELPER = true;
+
+    @SerializedName("enable_kuudra_supply_helper")
+    public boolean ENABLE_KUUDRA_SUPPLY_HELPER = true;
+
     @SerializedName("force_toggle_use_whitelist")
     public java.util.ArrayList<String> FORCE_TOGGLE_USE_WHITELIST = new java.util.ArrayList<>();
 

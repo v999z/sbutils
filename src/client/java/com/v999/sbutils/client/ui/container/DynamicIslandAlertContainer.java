@@ -19,6 +19,8 @@ public class DynamicIslandAlertContainer implements IContainer {
     public static final int MENTION_COLOR = 0xFF55FFFF;
     public static final int AUCTION_COLOR = 0xFFFFD24A;
     public static final int PRIVATE_MESSAGE_COLOR = 0xFFB388FF;
+    public static final int SLAYER_COLOR = 0xFFFF5555;
+    public static final int KUUDRA_COLOR = 0xFFFFAA00;
 
     private String title = "Alert";
     private String detail = "Check chat for details";

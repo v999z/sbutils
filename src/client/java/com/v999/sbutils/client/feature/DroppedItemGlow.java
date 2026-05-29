@@ -18,14 +18,25 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 public class DroppedItemGlow extends AbstractModule implements ClientTickEvents.EndTick, LevelRenderEvents.BeforeGizmos {
     public static final DroppedItemGlow INSTANCE = new DroppedItemGlow();
 
     private int itemCount = 0;
+    private static final Map<String, List<String>> PRESETS = new LinkedHashMap<>();
+
+    static {
+        PRESETS.put("rarity", List.of("rarity:legendary", "rarity:mythic", "rarity:divine", "rarity:special", "rarity:very special", "rarity:supreme"));
+        PRESETS.put("dungeon", List.of("name:recombobulator", "name:adaptive", "name:wither", "name:necron", "name:diamante", "name:precursor", "name:spirit", "name:ice spray"));
+        PRESETS.put("slayer", List.of("name:beheaded horror", "name:warden heart", "name:judgement core", "name:ender slayer", "name:flux", "name:scythe blade", "name:shard of the shredded"));
+        PRESETS.put("kuudra", List.of("name:fiery", "name:infernal", "name:aurora", "name:crimson", "name:terror", "name:fervor", "name:hollow", "name:kuudra", "name:mandible"));
+    }
 
     static {
         if (ConfigManager.FEATURES.ENABLE_DROPPED_ITEM_GLOW) {
@@ -177,6 +188,45 @@ public class DroppedItemGlow extends AbstractModule implements ClientTickEvents.
 
     public static int filterCount() {
         return normalizedFilters().size();
+    }
+
+    public static String presetListDisplay() {
+        return String.join(", ", PRESETS.keySet());
+    }
+
+    public static boolean applyPreset(String presetName) {
+        String normalizedPresetName = normalize(presetName);
+        List<String> preset = PRESETS.get(normalizedPresetName);
+        if (preset == null) {
+            return false;
+        }
+        if (ConfigManager.FEATURES.DROPPED_ITEM_GLOW_FILTERS == null) {
+            ConfigManager.FEATURES.DROPPED_ITEM_GLOW_FILTERS = new ArrayList<>();
+        }
+        for (String filter : preset) {
+            String normalizedFilter = normalizeFilter(filter);
+            boolean exists = ConfigManager.FEATURES.DROPPED_ITEM_GLOW_FILTERS.stream()
+                    .anyMatch(entry -> normalizeFilter(entry).equals(normalizedFilter));
+            if (!exists) {
+                ConfigManager.FEATURES.DROPPED_ITEM_GLOW_FILTERS.add(normalizedFilter);
+            }
+        }
+        ConfigManager.FEATURES.DROPPED_ITEM_GLOW_ONLY_MATCHING = true;
+        ConfigManager.FEATURES.ENABLE_DROPPED_ITEM_GLOW = true;
+        ConfigManager.FEATURES.markAsChanged();
+        ConfigManager.processChanges();
+        SbutilsClient.moduleList.showModule(INSTANCE);
+        return true;
+    }
+
+    public static boolean applyPresetCycle() {
+        List<String> names = Arrays.asList(PRESETS.keySet().toArray(String[]::new));
+        if (names.isEmpty()) {
+            return false;
+        }
+        int currentSize = filterCount();
+        String selected = names.get(currentSize % names.size());
+        return applyPreset(selected);
     }
 
     @Override
