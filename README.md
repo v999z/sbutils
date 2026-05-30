@@ -10,7 +10,7 @@ Open the ClickGUI with `/sbutils` or the configured keybind.
 - ClickGUI theme selector
 - ClickGUI settings search bar
 - Accent color selector
-- Compact mode for denser settings
+- Show top-right active module list
 - HUD editor for movable HUD elements
 - Speed Dial help link
 - GitHub link
@@ -18,6 +18,7 @@ Open the ClickGUI with `/sbutils` or the configured keybind.
 ## Features
 
 - Auto Tip
+- Chat reminders for SkyBlock chores with built-in timers
 - Foraging style warning
 - Entrance notifier for Dungeons and Kuudra when Minecraft is unfocused
 - Force toggle use on whitelisted item IDs
@@ -73,6 +74,11 @@ The config folder contains SBUtils JSON files, synced Speed Dial contacts, and c
 - `/sbutils nickhider on|off|set ALIAS` controls nickname hiding
 - `/sbutils resetLifeTimer` resets life saver cooldown tracking
 - `/sbutils resetAutoTip` resets Auto Tip timing
+- `/sbutils reminders` shows reminder status
+- `/sbutils reminders test` sends the next enabled reminder in chat
+- `/sbutils reminders done PRESET` marks a built-in reminder preset as completed. Presets: `daily`, `experiments`, `cakes`, `forge_minions`
+- `/sbutils reminder <time> <message>` creates a custom reminder. Examples: `10m`, `2h`, `1d`, `1h30m`
+- `/sbutils reminder list|remove|edit|move` manages custom reminders
 - `/sbutils tps` refreshes TPS tracking
 - `/sbutils update status` shows updater status
 - `/sbutils update check` checks for GitHub releases

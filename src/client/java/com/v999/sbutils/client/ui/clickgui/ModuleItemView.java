@@ -12,6 +12,8 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
+import java.util.List;
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 public class ModuleItemView implements MeasurableElement {
@@ -20,19 +22,19 @@ public class ModuleItemView implements MeasurableElement {
     public static final float COMPACT_HEIGHT = 11.5F;
 
     private static float height() {
-        return ClickGUIScreen.isCompactMode() ? COMPACT_HEIGHT : DEFAULT_HEIGHT;
+        return COMPACT_HEIGHT;
     }
 
     private static float titleFontSize() {
-        return ClickGUIScreen.isCompactMode() ? 7F : 8F;
+        return 7F;
     }
 
     private static float subtitleFontSize() {
-        return ClickGUIScreen.isCompactMode() ? 5.25F : 6F;
+        return 5.25F;
     }
 
     private static float subtitleOffsetY() {
-        return ClickGUIScreen.isCompactMode() ? 6.6F : 8F;
+        return 6.6F;
     }
 
     public @NonNull String title;
@@ -43,6 +45,8 @@ public class ModuleItemView implements MeasurableElement {
     private @Nullable Runnable callback;
     private @Nullable Switch simpleSwitcher;
     private @Nullable Supplier<String> subtitleSupplier;
+    private @Nullable BooleanSupplier expandedSupplier;
+    private @Nullable List<ModuleItemView> dropdownChildren;
 
     private ModuleItemView(Minecraft client, @NonNull String title, @Nullable String subtitle) {
         this.title = title;
@@ -66,9 +70,25 @@ public class ModuleItemView implements MeasurableElement {
         this.callback = callback;
     }
 
+    ModuleItemView(Minecraft client, @NonNull String title, @NonNull Supplier<String> subtitleSupplier,
+                   @NonNull BooleanSupplier expandedSupplier, @NonNull Runnable callback,
+                   @NonNull List<ModuleItemView> dropdownChildren) {
+        this(client, title, (String) null);
+        this.subtitleSupplier = subtitleSupplier;
+        this.expandedSupplier = expandedSupplier;
+        this.callback = callback;
+        this.dropdownChildren = dropdownChildren;
+    }
+
     @Override
     public float measureHeight() {
-        return height();
+        float measuredHeight = height();
+        if (isDropdownExpanded()) {
+            for (ModuleItemView child : dropdownChildren) {
+                measuredHeight += AbstractPage.itemGap() + child.measureHeight();
+            }
+        }
+        return measuredHeight;
     }
 
     public boolean matchesSearch(String query) {
@@ -106,6 +126,18 @@ public class ModuleItemView implements MeasurableElement {
             simpleSwitcher.updateEndPosition(endX - 2F, endY - offsetY);
             simpleSwitcher.render(context, mouseX, mouseY, timeDiff);
         }
+
+        if (isDropdownExpanded()) {
+            float childStartY = startY + height() + AbstractPage.itemGap();
+            float childStartX = startX + 8F;
+            for (ModuleItemView child : dropdownChildren) {
+                float childHeight = child.measureHeight();
+                child.updateStartPosition(childStartX, childStartY);
+                child.updateEndPosition(endX, childStartY + childHeight);
+                child.render(context, mouseX, mouseY, timeDiff);
+                childStartY += childHeight + AbstractPage.itemGap();
+            }
+        }
     }
 
     @Override
@@ -123,10 +155,23 @@ public class ModuleItemView implements MeasurableElement {
     @Override
     public void remove() {
         MeasurableElement.super.remove();
+        if (dropdownChildren != null) {
+            for (ModuleItemView child : dropdownChildren) {
+                child.remove();
+            }
+        }
     }
 
     @Override
     public boolean mouseClicked(float mouseX, float mouseY) {
+        if (isDropdownExpanded() && dropdownChildren != null) {
+            for (ModuleItemView child : dropdownChildren) {
+                if (child.startX <= mouseX && mouseX <= child.endX && child.startY <= mouseY && mouseY <= child.endY) {
+                    return child.mouseClicked(mouseX, mouseY);
+                }
+            }
+            if (mouseY > startY + height()) return true;
+        }
         if (callback != null) {
             callback.run();
         } else if (simpleSwitcher != null) {
@@ -135,5 +180,9 @@ public class ModuleItemView implements MeasurableElement {
             return false;
         }
         return true;
+    }
+
+    private boolean isDropdownExpanded() {
+        return expandedSupplier != null && dropdownChildren != null && expandedSupplier.getAsBoolean();
     }
 }

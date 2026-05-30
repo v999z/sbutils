@@ -1,0 +1,7 @@
+{
+"0_ping_dungeonbreaker":false,
+"use_spectator_fog":true,
+"remove_suffocation_screen":true,
+"cancel_shortbow_pull":true,
+"no_command_execution_confirmation":false
+}

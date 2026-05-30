@@ -1,6 +1,5 @@
 package com.v999.sbutils.client.ui.clickgui;
 
-import com.v999.sbutils.client.config.ConfigManager;
 import com.v999.sbutils.client.ui.clickgui.fubuki.ScrollWrapper;
 import com.v999.sbutils.client.ui.clickgui.fubuki.list.ListView;
 import net.minecraft.client.Minecraft;
@@ -18,7 +17,7 @@ public abstract class AbstractPage implements Element {
     private final List<ModuleItemView> allItems;
 
     public static float itemGap() {
-        return ConfigManager.GENERAL.CLICK_GUI_COMPACT_MODE ? 2F : 4F;
+        return 4F;
     }
 
     AbstractPage(Minecraft client, ListView<ModuleItemView> listView) {

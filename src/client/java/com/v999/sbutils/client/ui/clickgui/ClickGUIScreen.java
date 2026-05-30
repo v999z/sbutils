@@ -1,7 +1,7 @@
 package com.v999.sbutils.client.ui.clickgui;
 
-import com.v999.sbutils.client.config.ConfigManager;
 import com.v999.sbutils.client.ui.Easy2D;
+import com.v999.sbutils.client.config.ConfigManager;
 import com.v999.sbutils.client.ui.Space;
 import com.v999.sbutils.client.ui.animation.Animation;
 import com.v999.sbutils.client.ui.animation.Smooth;
@@ -37,27 +37,21 @@ public class ClickGUIScreen extends Screen {
 
     private static final float DEFAULT_HALF_WIDTH = 180F;
     private static final float DEFAULT_HALF_HEIGHT = 110F;
-    private static final float DEFAULT_OUTER_RADIUS = 24F;
-    private static final float DEFAULT_OUTER_PADDING = 18F;
-    private static final float COMPACT_OUTER_RADIUS = 18F;
-    private static final float COMPACT_OUTER_PADDING = 12F;
+    private static final float OUTER_RADIUS = 18F;
+    private static final float OUTER_PADDING = 12F;
     private static String searchQuery = "";
     private static long searchIndicateUntil = 0L;
 
-    public static boolean isCompactMode() {
-        return ConfigManager.GENERAL.CLICK_GUI_COMPACT_MODE;
-    }
-
     public static float outerPadding() {
-        return isCompactMode() ? COMPACT_OUTER_PADDING : DEFAULT_OUTER_PADDING;
+        return OUTER_PADDING;
     }
 
     public static float titleFontSize() {
-        return isCompactMode() ? 12F : 14F;
+        return 12F;
     }
 
     public static float navigationFontSize() {
-        return isCompactMode() ? 8.5F : 10F;
+        return 8.5F;
     }
 
     public static String searchQuery() {
@@ -85,7 +79,7 @@ public class ClickGUIScreen extends Screen {
     }
 
     private static float outerRadius() {
-        return isCompactMode() ? COMPACT_OUTER_RADIUS : DEFAULT_OUTER_RADIUS;
+        return OUTER_RADIUS;
     }
 
     private float lastMouseClickRelativeX = 0, lastMouseClickRelativeY = 0;
@@ -127,6 +121,18 @@ public class ClickGUIScreen extends Screen {
             @Override
             public boolean navigate() {
                 listFragment.push(new FeaturesPage(client));
+                return true;
+            }
+        });
+        this.nav.destinations.add(new NavigationDestination() {
+            @Override
+            public String name() {
+                return "Reminders";
+            }
+
+            @Override
+            public boolean navigate() {
+                listFragment.push(new RemindersPage(client));
                 return true;
             }
         });
@@ -219,7 +225,7 @@ public class ClickGUIScreen extends Screen {
                 startY + outerPadding);
         this.nav.width = halfWidth * 2 - outerPadding * 3 - titleText.bounds.width / scale;
         this.nav.height = titleText.bounds.height / scale;
-        this.nav.buttonHeight = this.nav.height + (isCompactMode() ? 2F : 4F);
+        this.nav.buttonHeight = this.nav.height + 2F;
 
         // set left list
         this.listFragment.updateStartPosition(startX + outerPadding, startY + outerPadding + titleText.bounds.height / scale + outerPadding);

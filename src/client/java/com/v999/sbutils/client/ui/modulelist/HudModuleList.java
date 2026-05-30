@@ -1,6 +1,7 @@
 package com.v999.sbutils.client.ui.modulelist;
 
 import com.v999.sbutils.client.compat.SkyblockerCompat;
+import com.v999.sbutils.client.config.ConfigManager;
 import com.v999.sbutils.client.feature.AbstractModule;
 import com.v999.sbutils.client.ui.Alignment;
 import com.v999.sbutils.client.ui.Easy2D;
@@ -45,6 +46,7 @@ public class HudModuleList implements HudElement {
 
     @Override
     public void extractRenderState(@NonNull GuiGraphicsExtractor context, @NonNull DeltaTracker deltaTracker) {
+        if (!ConfigManager.GENERAL.SHOW_MODULE_LIST) return;
         Minecraft client = Minecraft.getInstance();
         if (client.player == null) return;
         long now = Util.getMillis();

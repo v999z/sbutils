@@ -2,6 +2,7 @@ package com.v999.sbutils.client.mixin;
 
 import com.v999.sbutils.client.feature.AutoTip;
 import com.v999.sbutils.client.feature.LifeSaverTimer;
+import com.v999.sbutils.client.feature.Reminders;
 import com.v999.sbutils.client.util.SkyblockLocation;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl;
@@ -31,5 +32,6 @@ public class MixinClientCommonPacketListenerImpl {
         String brand = brandPayload.brand();
         SkyblockLocation.whenServerBrandUpdate(brand);
         AutoTip.INSTANCE.whenServerBrandUpdate(brand);
+        Reminders.INSTANCE.whenServerBrandUpdate(brand);
     }
 }

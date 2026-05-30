@@ -91,6 +91,7 @@ public class SbutilsClient implements ClientModInitializer {
         ClientTickEvents.START_CLIENT_TICK.register(BetterDungeonbreaker.INSTANCE);
         ClientTickEvents.START_CLIENT_TICK.register(ToggleUse.INSTANCE);
         ClientTickEvents.START_CLIENT_TICK.register(FreeLook.INSTANCE);
+        ClientTickEvents.START_CLIENT_TICK.register(Reminders.INSTANCE::onClientTick);
         ClientTickEvents.START_CLIENT_TICK.register(EtherwarpHelper.INSTANCE);
         ClientTickEvents.START_CLIENT_TICK.register(KuudraAutoPearl.INSTANCE);
         ClientTickEvents.END_CLIENT_TICK.register(EtherwarpHelper.INSTANCE);
@@ -126,6 +127,32 @@ public class SbutilsClient implements ClientModInitializer {
                                 AutoTip.INSTANCE.reset();
                                 return 0;
                             }))
+                    .then(literal("reminders")
+                            .executes(context -> {
+                                context.getSource().sendFeedback(Component.literal("[Sbutils] Reminders are " + (ConfigManager.FEATURES.ENABLE_REMINDERS ? "enabled" : "disabled") +
+                                        ". Enabled: " + Reminders.enabledReminderDisplay() + ". Custom: " + Reminders.customReminderCountDisplay()));
+                                return 0;
+                            })
+                            .then(literal("test")
+                                    .executes(context -> {
+                                        Reminders.INSTANCE.testNow();
+                                        return 0;
+                                    }))
+                            .then(literal("done")
+                                    .executes(context -> {
+                                        context.getSource().sendFeedback(Component.literal("[Sbutils] Reminder presets: " + Reminders.presetListDisplay()));
+                                        return 0;
+                                    })
+                                    .then(argument("preset", StringArgumentType.string())
+                                            .executes(context -> {
+                                                String preset = StringArgumentType.getString(context, "preset");
+                                                if (Reminders.markPresetDone(preset)) {
+                                                    context.getSource().sendFeedback(Component.literal("[Sbutils] Marked reminder preset as done: " + preset));
+                                                } else {
+                                                    context.getSource().sendFeedback(Component.literal("[Sbutils] Unknown reminder preset. Available: " + Reminders.presetListDisplay()));
+                                                }
+                                                return 0;
+                                            }))))
                     .then(literal("tps")
                             .executes(context -> {
                                 ServerTPSContainer.INSTANCE.whenRespawn();
@@ -354,6 +381,7 @@ public class SbutilsClient implements ClientModInitializer {
                                         context.getSource().sendFeedback(Component.literal("[Sbutils] Auto updater enabled."));
                                         return 0;
                                     })));
+            Reminders.registerCommand(builder);
             moduleList.registerCommand(builder);
             var command = dispatcher.register(builder);
             dispatcher.register(literal("gy").redirect(command));

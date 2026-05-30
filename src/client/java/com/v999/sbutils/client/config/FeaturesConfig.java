@@ -22,6 +22,39 @@ public class FeaturesConfig extends AbstractConfig {
     @SerializedName("enable_auto_tip")
     public boolean ENABLE_AUTO_TIP = false;
 
+    @SerializedName("enable_reminders")
+    public boolean ENABLE_REMINDERS = false;
+
+    @SerializedName("reminders_skyblock_only")
+    public boolean REMINDERS_SKYBLOCK_ONLY = true;
+
+    @SerializedName("remind_daily_tasks")
+    public boolean REMIND_DAILY_TASKS = true;
+
+    @SerializedName("remind_experiment_table")
+    public boolean REMIND_EXPERIMENT_TABLE = true;
+
+    @SerializedName("remind_cakes")
+    public boolean REMIND_CAKES = true;
+
+    @SerializedName("remind_forge_and_minions")
+    public boolean REMIND_FORGE_AND_MINIONS = true;
+
+    @SerializedName("reminders_last_daily_tasks")
+    public long REMINDERS_LAST_DAILY_TASKS = 0L;
+
+    @SerializedName("reminders_last_experiment_table")
+    public long REMINDERS_LAST_EXPERIMENT_TABLE = 0L;
+
+    @SerializedName("reminders_last_cakes")
+    public long REMINDERS_LAST_CAKES = 0L;
+
+    @SerializedName("reminders_last_forge_and_minions")
+    public long REMINDERS_LAST_FORGE_AND_MINIONS = 0L;
+
+    @SerializedName("custom_reminders")
+    public java.util.ArrayList<ReminderEntry> CUSTOM_REMINDERS = new java.util.ArrayList<>();
+
     @SerializedName("enable_rng_drop_summary")
     public boolean ENABLE_RNG_DROP_SUMMARY = true;
 

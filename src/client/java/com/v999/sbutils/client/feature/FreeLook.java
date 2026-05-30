@@ -16,13 +16,14 @@ import org.lwjgl.glfw.GLFW;
 public class FreeLook extends AbstractModule implements ClientTickEvents.StartTick {
     public static final FreeLook INSTANCE = new FreeLook();
     private static final KeyMapping FREELOOK_KEY = KeyMappingHelper.registerKeyMapping(
-            new KeyMapping("key.sbutils.freelook", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, SbutilsClient.KEY_CATEGORY)
+            new KeyMapping("key.sbutils.freelook", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, SbutilsClient.KEY_CATEGORY)
     );
 
     private boolean active = false;
     private CameraType previousCameraType = CameraType.FIRST_PERSON;
     private float cameraYaw = 0F;
     private float cameraPitch = 0F;
+    private int zoomLevel = 0;
 
     private float lockedYaw = 0F;
     private float lockedPitch = 0F;
@@ -64,6 +65,7 @@ public class FreeLook extends AbstractModule implements ClientTickEvents.StartTi
         lockedBodyYaw = player.yBodyRot;
         cameraYaw = lockedYaw;
         cameraPitch = lockedPitch;
+        zoomLevel = 0;
         moduleList.needResort = true;
         SbutilsClient.moduleList.showModule(this);
     }
@@ -73,6 +75,7 @@ public class FreeLook extends AbstractModule implements ClientTickEvents.StartTi
             return;
         }
         active = false;
+        zoomLevel = 0;
         client.options.setCameraType(previousCameraType);
         var player = client.player;
         if (player != null) {
@@ -126,6 +129,30 @@ public class FreeLook extends AbstractModule implements ClientTickEvents.StartTi
         return active;
     }
 
+    public boolean onMouseScroll(double scrollY) {
+        if (!active) {
+            return false;
+        }
+        if (scrollY > 0D) {
+            zoomLevel = Mth.clamp(zoomLevel + 1, 0, 8);
+        } else if (scrollY < 0D) {
+            zoomLevel = Mth.clamp(zoomLevel - 1, 0, 8);
+        } else {
+            return false;
+        }
+        moduleList.needResort = true;
+        SbutilsClient.moduleList.showModule(this);
+        return true;
+    }
+
+    public float applyZoomFov(float fov) {
+        if (!active || zoomLevel <= 0) {
+            return fov;
+        }
+        float zoomMultiplier = 1F - zoomLevel * 0.08F;
+        return Mth.clamp(fov * zoomMultiplier, 15F, fov);
+    }
+
     public float getCameraYaw() {
         return cameraYaw;
     }
@@ -141,7 +168,8 @@ public class FreeLook extends AbstractModule implements ClientTickEvents.StartTi
 
     @Override
     public @Nullable String subtitle() {
-        return active ? "ON" : null;
+        if (!active) return null;
+        return zoomLevel > 0 ? "Zoom " + zoomLevel : "ON";
     }
 
     @Override

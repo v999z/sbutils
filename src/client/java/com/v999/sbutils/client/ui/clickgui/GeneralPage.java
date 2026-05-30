@@ -21,8 +21,8 @@ public class GeneralPage extends AbstractPage {
                 new ModuleItemView(client, "Accent color",
                         () -> "Current: " + ClickGuiTheme.accentDisplayName() + ". Click to cycle.",
                         ClickGuiTheme::cycleAccent),
-                new ModuleItemView(client, "Compact mode", "Use smaller padding, labels, gaps, and navigation so more settings fit on screen.", ConfigManager.GENERAL.CLICK_GUI_COMPACT_MODE, newValue -> {
-                    ConfigManager.GENERAL.CLICK_GUI_COMPACT_MODE = newValue;
+                new ModuleItemView(client, "Show module list", "Show active feature badges in the top-right corner.", ConfigManager.GENERAL.SHOW_MODULE_LIST, newValue -> {
+                    ConfigManager.GENERAL.SHOW_MODULE_LIST = newValue;
                     ConfigManager.GENERAL.markAsChanged();
                 }),
                 new ModuleItemView(client, "HUD editor", "Drag the Dynamic Island and performance HUD around.",
