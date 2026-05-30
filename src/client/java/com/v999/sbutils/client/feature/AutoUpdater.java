@@ -274,6 +274,7 @@ public final class AutoUpdater {
             Files.copy(in, installerClass, StandardCopyOption.REPLACE_EXISTING);
         }
 
+        Path logFile = currentJar.resolveSibling("sbutils-updater.log");
         new ProcessBuilder(
                 javaExe,
                 "-cp",
@@ -284,8 +285,8 @@ public final class AutoUpdater {
                 currentJar.toAbsolutePath().toString(),
                 installerRoot.toString()
         )
-                .redirectOutput(ProcessBuilder.Redirect.DISCARD)
-                .redirectError(ProcessBuilder.Redirect.DISCARD)
+                .redirectOutput(ProcessBuilder.Redirect.appendTo(logFile.toFile()))
+                .redirectError(ProcessBuilder.Redirect.appendTo(logFile.toFile()))
                 .start();
     }
 
