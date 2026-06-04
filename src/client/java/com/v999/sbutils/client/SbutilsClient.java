@@ -26,6 +26,7 @@ import com.v999.sbutils.client.util.SkyblockItem;
 import com.v999.sbutils.client.util.SkyblockLocation;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
@@ -356,36 +357,64 @@ public class SbutilsClient implements ClientModInitializer {
                                 return 0;
                             }))
                     .then(literal("update")
-                            .executes(context -> {
-                                context.getSource().sendFeedback(Component.literal("[Sbutils] " + AutoUpdater.getStatusLine()));
-                                return 0;
-                            })
+                            .executes(context -> sendUpdaterStatus(context.getSource()))
                             .then(literal("status")
-                                    .executes(context -> {
-                                        context.getSource().sendFeedback(Component.literal("[Sbutils] " + AutoUpdater.getStatusLine()));
-                                        return 0;
-                                    }))
+                                    .executes(context -> sendUpdaterStatus(context.getSource())))
                             .then(literal("check")
-                                    .executes(context -> {
-                                        AutoUpdater.checkForUpdatesAsync(true);
-                                        context.getSource().sendFeedback(Component.literal("[Sbutils] Checking GitHub releases..."));
-                                        return 0;
-                                    }))
+                                    .executes(context -> checkUpdaterManually(context.getSource())))
                             .then(literal("on")
-                                    .executes(context -> {
-                                        ConfigManager.GENERAL.AUTO_UPDATE_ENABLED = true;
-                                        ConfigManager.GENERAL.markAsChanged();
-                                        ConfigManager.processChanges();
-                                        AutoUpdater.setEnabledState(true);
-                                        AutoUpdater.checkForUpdatesAsync(true);
-                                        context.getSource().sendFeedback(Component.literal("[Sbutils] Auto updater enabled."));
-                                        return 0;
-                                    })));
+                                    .executes(context -> enableAutoUpdater(context.getSource())))
+                            .then(literal("off")
+                                    .executes(context -> disableAutoUpdater(context.getSource()))))
+                    .then(literal("autoupdates")
+                            .executes(context -> sendUpdaterStatus(context.getSource()))
+                            .then(literal("status")
+                                    .executes(context -> sendUpdaterStatus(context.getSource())))
+                            .then(literal("on")
+                                    .executes(context -> enableAutoUpdater(context.getSource())))
+                            .then(literal("off")
+                                    .executes(context -> disableAutoUpdater(context.getSource()))));
             Reminders.registerCommand(builder);
             moduleList.registerCommand(builder);
             var command = dispatcher.register(builder);
             dispatcher.register(literal("gy").redirect(command));
         });
+    }
+
+    private static int sendUpdaterStatus(FabricClientCommandSource source) {
+        source.sendFeedback(Component.literal("[Sbutils] " + AutoUpdater.getStatusLine()));
+        return 0;
+    }
+
+    private static int checkUpdaterManually(FabricClientCommandSource source) {
+        if (!AutoUpdater.isEnabled()) {
+            source.sendFeedback(Component.literal("[Sbutils] Auto updater is disabled. Use /sbutils autoupdates on to enable it."));
+            return 0;
+        }
+        AutoUpdater.checkForUpdatesAsync(true);
+        source.sendFeedback(Component.literal("[Sbutils] Checking GitHub releases..."));
+        return 0;
+    }
+
+    private static int enableAutoUpdater(FabricClientCommandSource source) {
+        ConfigManager.GENERAL.AUTO_UPDATE_ENABLED = true;
+        ConfigManager.GENERAL.AUTO_UPDATE_CONSENT_GIVEN = true;
+        ConfigManager.GENERAL.markAsChanged();
+        ConfigManager.processChanges();
+        AutoUpdater.setEnabledState(true);
+        AutoUpdater.checkForUpdatesAsync(true);
+        source.sendFeedback(Component.literal("[Sbutils] Auto updater enabled. Checking for updates..."));
+        return 0;
+    }
+
+    private static int disableAutoUpdater(FabricClientCommandSource source) {
+        ConfigManager.GENERAL.AUTO_UPDATE_ENABLED = false;
+        ConfigManager.GENERAL.AUTO_UPDATE_CONSENT_GIVEN = false;
+        ConfigManager.GENERAL.markAsChanged();
+        ConfigManager.processChanges();
+        AutoUpdater.setEnabledState(false);
+        source.sendFeedback(Component.literal("[Sbutils] Auto updater disabled."));
+        return 0;
     }
 
     private static String whitelistDisplay() {

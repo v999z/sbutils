@@ -80,8 +80,9 @@ The config folder contains SBUtils JSON files, synced Speed Dial contacts, and c
 - `/sbutils reminder <time> <message>` creates a custom reminder. Examples: `10m`, `2h`, `1d`, `1h30m`
 - `/sbutils reminder list|remove|edit|move` manages custom reminders
 - `/sbutils tps` refreshes TPS tracking
+- `/sbutils autoupdates on|off|status` controls the opt-in auto updater
 - `/sbutils update status` shows updater status
-- `/sbutils update check` checks for GitHub releases
+- `/sbutils update check` checks for GitHub releases after auto updates are enabled
 - `/gy` is an alias for `/sbutils`
 
 ## Speed Dial

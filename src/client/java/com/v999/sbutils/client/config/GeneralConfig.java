@@ -26,6 +26,9 @@ public class GeneralConfig extends AbstractConfig {
     public boolean SHOW_MODULE_LIST = false;
 
     @SerializedName("auto_update_enabled")
-    public boolean AUTO_UPDATE_ENABLED = true;
+    public boolean AUTO_UPDATE_ENABLED = false;
+
+    @SerializedName("auto_update_consent_given")
+    public boolean AUTO_UPDATE_CONSENT_GIVEN = false;
 
 }
